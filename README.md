@@ -76,7 +76,7 @@ npm run dev
 
 Open http://localhost:5180 and pick a role on the sign-on page.
 
-- **IDO Group Finance** needs the username and password in `.env` (`IDO_USERNAME`, `IDO_PASSWORD`). The local server checks them (`server/auth.ts`); they never appear in the browser code. Five wrong attempts lock sign-in for a minute, and sessions end after 12 hours or when the dev server restarts.
+- **IDO Group Finance** needs the username and password in `.env` (`IDO_USERNAME`, `IDO_PASSWORD`). The server checks them (`server/core.ts`); they never appear in the browser code. Five wrong attempts lock sign-in for a minute, and sessions end after 12 hours or when the password changes.
 - **CFO roles** are demo accounts: selecting one fills in the details.
 
 ### Settings in `.env`
@@ -92,8 +92,23 @@ cp .env.example .env
 | `IDO_USERNAME`, `IDO_PASSWORD` | IDO Group Finance sign-in |
 | `OPENROUTER_API_KEY` | Enables the live LLM for the assistant (optional) |
 | `OPENROUTER_MODEL` | Any OpenRouter model id (default `anthropic/claude-sonnet-4.5`) |
+| `AUTH_SECRET` | Optional fixed key for signing IDO sessions; if unset it is derived from the IDO credentials |
 
 Restart `npm run dev` after changing `.env`. Never commit `.env`; it is in `.gitignore`.
+
+## Deploy to Vercel
+
+The pages are static, and the `/api` routes (sign-in and the assistant) run as Vercel serverless functions in `api/`. They use the same code as the local server (`server/core.ts`). `vercel.json` sets the build, gives the assistant up to 60 seconds per answer, and sends page refreshes such as `/ido/journey` to the app.
+
+1. Import the GitHub repository in Vercel. The framework is detected as Vite; no build settings need changing.
+2. In the project's **Settings → Environment Variables**, add the same values as your `.env` for Production (and Preview if you use it):
+   - `IDO_USERNAME`, `IDO_PASSWORD` (required for IDO sign-in)
+   - `OPENROUTER_API_KEY`, `OPENROUTER_MODEL` (optional, for the live assistant)
+   - `AUTH_SECRET` (optional)
+3. Redeploy: environment variables only apply to deployments made after they are added.
+4. Check `https://<your-app>.vercel.app/api/health`: it should return `{"live":true,...}` when the OpenRouter key is set.
+
+Without `IDO_USERNAME` and `IDO_PASSWORD` on Vercel, IDO sign-in shows "Sign-in is not configured". CFO demo roles work either way.
 
 ## How the assistant answers
 
@@ -146,8 +161,10 @@ Findings also appear in the exception queue and as actions on Home. Ledger reven
 | `src/lib/paths.ts` | Screen links for IDO versus a CFO |
 | `src/lib/assistant.ts` | FAQ → LLM → offline routing, LLM data context |
 | `src/lib/report.ts` | PDF and CSV export |
-| `server/auth.ts` | IDO sign-in check against `.env`, signed session tokens |
-| `server/openrouter.ts` | Dev-server proxy to OpenRouter (key stays server-side), answer cache |
+| `server/core.ts` | Sign-in check and OpenRouter proxy, shared by the dev server and Vercel (secrets stay server-side) |
+| `server/devApi.ts` | Serves the `/api` routes from `npm run dev` |
+| `api/*.ts` | Vercel serverless functions: `login`, `verify`, `health`, `chat` |
+| `vercel.json` | Vercel build, function timeout and page rewrites |
 | `src/pages/ido/*` | IDO screens (also reused, limited to one company, for CFOs) |
 | `src/pages/tenant/*` | CFO home, company journey, close checklist, reconciliations, exceptions |
 | `public/brands/` | Julphar and RAK Ports logos |
