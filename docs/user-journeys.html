@@ -1,0 +1,607 @@
+<title>IDO Reconciliation User Journeys</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: navy masthead band, then a sticky contents rail beside a single reading column; journey maps scroll sideways inside their own frame. */
+:root {
+  --bg: #F3F6F7;
+  --surface: #FFFFFF;
+  --ink: #001C27;
+  --ink-2: #3E5560;
+  --muted: #6F7D82;
+  --line: #DCE5E9;
+  --primary: #0A3D50;
+  --teal: #015677;
+  --sky: #759CAF;
+  --band: #001C27;
+  --band-ink: #FFFFFF;
+  --band-ink-2: rgba(255,255,255,.68);
+  --tint: #E8F0F3;
+  --good: #0F7A55;
+  --good-bg: #E6F4EE;
+  --warn: #A55A00;
+  --warn-bg: #FBF0E0;
+  --bad: #B4234A;
+  --bad-bg: #FBE8EE;
+  --font-display: "Avenir Next", "Nunito Sans", system-ui, sans-serif;
+  --font-body: "Nunito Sans", "Avenir Next", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #00141C; --surface: #062633; --ink: #E5EEF1; --ink-2: #B5C6CD; --muted: #8DA2AA; --line: #143A4A;
+    --primary: #A9CFDE; --teal: #6DB8D3; --sky: #8FB4C6; --band: #000E14; --band-ink: #FFFFFF; --band-ink-2: rgba(255,255,255,.62);
+    --tint: #0B3242; --good: #5FD0A4; --good-bg: #0B3A2C; --warn: #F2B566; --warn-bg: #3A2A10; --bad: #F38BA6; --bad-bg: #3D1422;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #00141C; --surface: #062633; --ink: #E5EEF1; --ink-2: #B5C6CD; --muted: #8DA2AA; --line: #143A4A;
+  --primary: #A9CFDE; --teal: #6DB8D3; --sky: #8FB4C6; --band: #000E14; --band-ink: #FFFFFF; --band-ink-2: rgba(255,255,255,.62);
+  --tint: #0B3242; --good: #5FD0A4; --good-bg: #0B3A2C; --warn: #F2B566; --warn-bg: #3A2A10; --bad: #F38BA6; --bad-bg: #3D1422;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 400 16px/1.6 var(--font-body); }
+h1, h2, h3, h4 { font-family: var(--font-display); color: var(--primary); text-wrap: balance; letter-spacing: -0.015em; margin: 0; }
+h2 { font-size: 28px; line-height: 1.2; font-weight: 700; }
+h3 { font-size: 19px; font-weight: 700; }
+p { margin: 0; }
+a { color: var(--teal); }
+:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; border-radius: 4px; }
+.eyebrow { font: 700 11px/1.3 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.mono { font-family: var(--font-mono); font-size: 12.5px; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* Masthead */
+.mast { background: var(--band); color: var(--band-ink); position: relative; overflow: hidden; }
+.mast .wrap { padding-block: 36px 40px; position: relative; }
+.mast svg.mark { position: absolute; right: -60px; top: -40px; width: 360px; height: 360px; opacity: .07; }
+.mast .brand { display: flex; align-items: center; gap: 12px; font: 700 13px/1.15 var(--font-display); }
+.mast .brand svg { width: 34px; height: 34px; }
+.mast h1 { color: var(--band-ink); font-size: clamp(32px, 5vw, 50px); line-height: 1.06; margin-top: 40px; font-weight: 700; max-width: 18ch; }
+.mast .lede { color: var(--band-ink-2); font-size: 17px; max-width: 62ch; margin-top: 14px; }
+.mast .eyebrow { color: #8FB4C6; margin-top: 28px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 26px; font-size: 13px; color: var(--band-ink-2); }
+.meta b { color: var(--band-ink); font-weight: 600; }
+.pill-demo { display: inline-block; border: 1px solid rgba(252, 211, 77, .6); color: #FDE68A; background: rgba(252,211,77,.1); border-radius: 999px; padding: 2px 10px; font-size: 12px; font-weight: 700; }
+
+/* Body grid */
+.layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; padding-block: 40px 80px; }
+.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; }
+.toc ol { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 2px; counter-reset: toc; }
+.toc a { display: block; padding: 6px 10px; border-radius: 8px; color: var(--ink-2); text-decoration: none; font-size: 14px; }
+.toc a:hover { background: var(--tint); color: var(--primary); }
+main { min-width: 0; display: grid; gap: 64px; }
+section { display: grid; gap: 18px; scroll-margin-top: 24px; }
+section > p.intro { color: var(--ink-2); max-width: 68ch; }
+@media (max-width: 900px) {
+  .layout { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .toc { position: static; }
+  .toc ol { display: flex; flex-wrap: wrap; gap: 6px; }
+  .toc a { background: var(--surface); border: 1px solid var(--line); padding: 4px 10px; font-size: 13px; }
+}
+
+/* Summary strip */
+.facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+.facts div { padding: 16px 18px; border-left: 1px solid var(--line); min-width: 0; }
+.facts div:first-child { border-left: 0; }
+.facts dt { font-size: 12px; color: var(--muted); font-weight: 600; }
+.facts dd { margin: 4px 0 0; font: 700 22px/1.2 var(--font-display); color: var(--primary); font-variant-numeric: tabular-nums; }
+@media (max-width: 700px) { .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } .facts div:nth-child(3) { border-left: 0; } .facts div:nth-child(n+3) { border-top: 1px solid var(--line); } }
+
+/* Personas */
+.personas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 960px) { .personas { grid-template-columns: minmax(0, 1fr); } }
+.persona { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: grid; gap: 14px; align-content: start; }
+.persona header { display: flex; gap: 12px; align-items: center; }
+.avatar { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font: 700 15px var(--font-display); color: #fff; background: var(--teal); flex: none; }
+.avatar.ido { background: var(--primary); }
+:root[data-theme="dark"] .avatar.ido { color: #001C27; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .avatar.ido { color: #001C27; } }
+.persona .role { font-size: 13px; color: var(--muted); }
+.persona dl { margin: 0; display: grid; gap: 10px; font-size: 14px; }
+.persona dt { font-weight: 700; color: var(--primary); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+.persona dd { margin: 2px 0 0; color: var(--ink-2); }
+.persona ul { margin: 2px 0 0; padding-left: 18px; color: var(--ink-2); }
+.quote { border-left: 3px solid var(--sky); padding: 2px 0 2px 12px; font-style: italic; color: var(--ink-2); font-size: 14px; }
+
+/* Journey map */
+.journey { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.journey > header { padding: 20px 22px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; border-bottom: 1px solid var(--line); }
+.journey > header p { color: var(--ink-2); font-size: 14px; max-width: 70ch; margin-top: 4px; }
+.journey .who { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--muted); white-space: nowrap; }
+.scroll { overflow-x: auto; }
+.map { display: grid; grid-template-columns: 132px repeat(var(--n), minmax(178px, 1fr)); min-width: calc(132px + var(--n) * 178px); font-size: 13.5px; }
+.map > div { padding: 12px 14px; border-top: 1px solid var(--line); border-left: 1px solid var(--line); min-width: 0; }
+.map > .rowh { border-left: 0; font-weight: 700; color: var(--muted); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; background: var(--tint); }
+.map > .stage { border-top: 0; background: var(--tint); }
+.map > .stage b { display: block; font: 700 14px/1.3 var(--font-display); color: var(--primary); }
+.map > .stage span { font-size: 11px; color: var(--muted); font-weight: 700; letter-spacing: .08em; }
+.map .corner { border-top: 0; }
+.route { display: inline-block; margin-top: 6px; padding: 1px 7px; border-radius: 6px; background: var(--tint); color: var(--teal); }
+.map ul { margin: 0; padding-left: 16px; display: grid; gap: 4px; }
+.map .feel { display: flex; gap: 8px; align-items: flex-start; }
+.dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 5px; flex: none; }
+.dot.good { background: var(--good); } .dot.warn { background: var(--warn); } .dot.bad { background: var(--bad); } .dot.neutral { background: var(--sky); }
+.map .curve { grid-column: 2 / -1; padding: 6px 0 2px; }
+.map .curve svg { display: block; width: 100%; height: 96px; }
+.curve .axis { stroke: var(--line); stroke-dasharray: 3 4; }
+.curve .line { fill: none; stroke: var(--teal); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.curve .area { fill: var(--teal); opacity: .08; }
+.curve circle { stroke: var(--surface); stroke-width: 2; }
+.curve text { font: 600 10px var(--font-body); fill: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--muted); padding: 12px 22px; border-top: 1px solid var(--line); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend .dot { margin-top: 0; }
+
+/* Moments */
+.moments { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 860px) { .moments { grid-template-columns: minmax(0, 1fr); } }
+.moment { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 6px; align-content: start; }
+.moment .tag { justify-self: start; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+.tag.good { background: var(--good-bg); color: var(--good); } .tag.warn { background: var(--warn-bg); color: var(--warn); } .tag.bad { background: var(--bad-bg); color: var(--bad); }
+.moment p { font-size: 14px; color: var(--ink-2); }
+
+/* Tables */
+.table { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 720px; }
+th { text-align: left; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); background: var(--tint); padding: 10px 14px; }
+td { padding: 11px 14px; border-top: 1px solid var(--line); vertical-align: top; color: var(--ink-2); }
+td:first-child { color: var(--primary); font-weight: 700; }
+.who-chip { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 999px; background: var(--tint); color: var(--teal); margin: 0 4px 4px 0; white-space: nowrap; }
+
+/* Flow */
+.flow { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; overflow-x: auto; }
+.flow pre.mermaid { margin: 0; background: transparent; }
+
+/* Script */
+.script { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; counter-reset: s; }
+.script li { counter-increment: s; display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.script .t { font: 600 12px var(--font-mono); color: var(--teal); padding-top: 3px; font-variant-numeric: tabular-nums; }
+.script b { color: var(--primary); }
+.script p { font-size: 14px; color: var(--ink-2); margin-top: 2px; }
+
+/* Two-col lists */
+.cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 760px) { .cols { grid-template-columns: minmax(0, 1fr); } }
+.box { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; }
+.box h3 { font-size: 16px; margin-bottom: 8px; }
+.box ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; color: var(--ink-2); font-size: 14px; }
+footer.end { color: var(--muted); font-size: 12px; border-top: 1px solid var(--line); padding-top: 18px; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<header class="mast">
+  <svg class="mark" viewBox="0 0 512 512" aria-hidden="true"><path fill="#FFFFFF" fill-rule="evenodd" d="M512 9.40017e-07H409.597V51.2026H315.421L307.201 9.40017e-07H204.799L196.579 51.2026H102.403V9.40017e-07H0V102.405H51.2044V196.58L0 204.797V307.203L51.2044 315.42V409.595H0V512H102.403V460.804H196.579L204.799 512H307.201L315.421 460.804H409.597V512H512V409.595H460.802V315.42L512 307.203V204.797L460.802 196.58V102.405H512V9.40017e-07ZM256.003 108.931L315.421 159.576H352.426V196.58L403.067 255.994L352.426 315.42V352.424H315.421L256.003 403.069L196.579 352.424H159.574V315.42L108.933 255.994L159.574 196.58V159.576H196.579L256.003 108.931Z"/></svg>
+  <div class="wrap">
+    <div class="brand">
+      <svg viewBox="0 0 512 512" aria-hidden="true"><path fill="#FFFFFF" fill-rule="evenodd" d="M512 9.40017e-07H409.597V51.2026H315.421L307.201 9.40017e-07H204.799L196.579 51.2026H102.403V9.40017e-07H0V102.405H51.2044V196.58L0 204.797V307.203L51.2044 315.42V409.595H0V512H102.403V460.804H196.579L204.799 512H307.201L315.421 460.804H409.597V512H512V409.595H460.802V315.42L512 307.203V204.797L460.802 196.58V102.405H512V9.40017e-07ZM256.003 108.931L315.421 159.576H352.426V196.58L403.067 255.994L352.426 315.42V352.424H315.421L256.003 403.069L196.579 352.424H159.574V315.42L108.933 255.994L159.574 196.58V159.576H196.579L256.003 108.931Z"/></svg>
+      <span>Investment &amp;<br>Development Office</span>
+    </div>
+    <div class="eyebrow">Finance Reconciliation Supervisor · User journeys</div>
+    <h1>How CFOs and IDO move through the month-end close</h1>
+    <p class="lede">Four journeys through the demo: a portfolio company CFO closing the month, a finance preparer clearing a reconciliation, IDO Group Finance supervising all companies, and IDO asking the assistant a portfolio question. Each one names the screen, the action and how the user feels at that moment.</p>
+    <div class="meta">
+      <span><b>Version</b> 1.0 · 13 Nov 2026</span>
+      <span><b>Scope</b> October 2026 close, business day 9</span>
+      <span><b>Build</b> Vite + React demo, local</span>
+      <span class="pill-demo">Mock data</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <nav class="toc" aria-label="Contents">
+    <div class="eyebrow">Contents</div>
+    <ol>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#personas">Personas</a></li>
+      <li><a href="#flow">Navigation flow</a></li>
+      <li><a href="#j1">CFO month-end close</a></li>
+      <li><a href="#j2">Preparer clears a reconciliation</a></li>
+      <li><a href="#j3">IDO supervises the portfolio</a></li>
+      <li><a href="#j4">IDO asks the assistant</a></li>
+      <li><a href="#moments">Key moments</a></li>
+      <li><a href="#screens">Screen inventory</a></li>
+      <li><a href="#rules">Rules and edge cases</a></li>
+      <li><a href="#script">Demo script</a></li>
+      <li><a href="#next">Demo to product</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <!-- Overview -->
+    <section id="overview">
+      <div class="eyebrow">Overview</div>
+      <h2>One product, two altitudes</h2>
+      <p class="intro">Each portfolio company works its own close: reconciliations, exceptions and sign-off, scoped to that company only. IDO looks across every company at once, compares them on a common health score, drills down read-only, and asks questions in plain English. The journeys below follow both altitudes through the same October close.</p>
+      <dl class="facts">
+        <div><dt>Portfolio companies</dt><dd>10</dd></div>
+        <div><dt>Sectors</dt><dd>6</dd></div>
+        <div><dt>Reconciliations per close</dt><dd>80</dd></div>
+        <div><dt>Close SLA</dt><dd>8 days</dd></div>
+      </dl>
+    </section>
+
+    <!-- Personas -->
+    <section id="personas">
+      <div class="eyebrow">Who uses it</div>
+      <h2>Personas</h2>
+      <div class="personas">
+        <article class="persona">
+          <header><div class="avatar">KF</div><div><h3>Portfolio company CFO</h3><div class="role">e.g. Karim Fawzi, Julphar · SAP ECC, 9 entities</div></div></header>
+          <p class="quote">"I need to know by 9am what stops me signing off, and prove to IDO that it is under control."</p>
+          <dl>
+            <div><dt>Goals</dt><dd><ul><li>Close inside the 8-day SLA</li><li>Keep aged exceptions down</li><li>Send a clean close pack to IDO</li></ul></dd></div>
+            <div><dt>Pain today</dt><dd><ul><li>Spreadsheet recs, emailed status</li><li>No single view of what is blocking</li><li>Intercompany FX breaks recur every month</li></ul></dd></div>
+            <div><dt>Sees</dt><dd>Own company only. Full edit rights.</dd></div>
+          </dl>
+        </article>
+        <article class="persona">
+          <header><div class="avatar">AT</div><div><h3>Finance preparer / reviewer</h3><div class="role">e.g. Ahmed T., reports to the CFO</div></div></header>
+          <p class="quote">"Show me the unmatched lines and a likely fix. Don't make me hunt through 2,000 rows."</p>
+          <dl>
+            <div><dt>Goals</dt><dd><ul><li>Clear unmatched items fast</li><li>Leave an audit trail reviewers trust</li><li>Hand off cleanly for sign-off</li></ul></dd></div>
+            <div><dt>Pain today</dt><dd><ul><li>Manual tick-and-bash matching</li><li>Context lost in email threads</li></ul></dd></div>
+            <div><dt>Sees</dt><dd>Own company only. Uses the CFO login in this demo.</dd></div>
+          </dl>
+        </article>
+        <article class="persona">
+          <header><div class="avatar ido">GF</div><div><h3>IDO Group Finance</h3><div class="role">Portfolio supervisor, Investment &amp; Development Office</div></div></header>
+          <p class="quote">"Which companies are at risk this close, and why? I want the answer before the board asks."</p>
+          <dl>
+            <div><dt>Goals</dt><dd><ul><li>Spot at-risk companies early</li><li>Compare companies on one scale</li><li>Answer ad-hoc questions in minutes</li></ul></dd></div>
+            <div><dt>Pain today</dt><dd><ul><li>Ten different formats from ten CFOs</li><li>Status arrives after the fact</li></ul></dd></div>
+            <div><dt>Sees</dt><dd>All companies. Read-only, can comment.</dd></div>
+          </dl>
+        </article>
+      </div>
+    </section>
+
+    <!-- Flow -->
+    <section id="flow">
+      <div class="eyebrow">Structure</div>
+      <h2>Navigation flow</h2>
+      <p class="intro">Sign-in picks a persona. CFOs are locked to their own company routes under <span class="mono">/t/:company</span>. IDO starts in the master view under <span class="mono">/ido</span> and can open any company read-only.</p>
+      <div class="flow">
+<pre class="mermaid">
+flowchart LR
+  S([Sign-in page /]) -->|IDO Group Finance| P[Portfolio overview /ido]
+  S -->|Company CFO| O[Company overview /t/:company]
+  P --> X[All exceptions /ido/exceptions]
+  P --> A[Assistant /ido/assistant]
+  P -->|row, flag or heatmap cell| Q[Company quick view]
+  Q -->|Ask about| A
+  Q -->|Open company view| O
+  O --> R[Reconciliations]
+  O --> E[Exceptions queue]
+  R --> D[Reconciliation detail]
+  E -->|row| W[Exception panel]
+  W -->|Open the reconciliation| D
+  O -.->|CFO opens another company| B{{Access denied, back to own company}}
+</pre>
+      </div>
+    </section>
+
+    <!-- Journey 1 -->
+    <section id="j1">
+      <div class="eyebrow">Journey 1</div>
+      <h2>CFO runs the month-end close</h2>
+      <div class="journey">
+        <header>
+          <div><h3>Karim, CFO of Julphar, on business day 9</h3><p>The close is past the 8-day SLA. Intercompany FX differences with overseas entities are the main blocker, and IDO will see the status on the master view.</p></div>
+          <div class="who"><span class="avatar" style="width:28px;height:28px;font-size:11px;border-radius:8px">KF</span> Company CFO</div>
+        </header>
+        <div class="scroll">
+          <div class="map" style="--n:6">
+            <div class="rowh corner">Stage</div>
+            <div class="stage"><span>1</span><b>Sign in</b></div>
+            <div class="stage"><span>2</span><b>Morning check</b></div>
+            <div class="stage"><span>3</span><b>Triage exceptions</b></div>
+            <div class="stage"><span>4</span><b>Work a reconciliation</b></div>
+            <div class="stage"><span>5</span><b>Review and sign off</b></div>
+            <div class="stage"><span>6</span><b>Report to IDO</b></div>
+
+            <div class="rowh">Doing</div>
+            <div>Picks Julphar from the company list on the sign-in page.<span class="route mono">/</span></div>
+            <div>Reads the greeting, health score, close progress bar and the five KPI tiles.<span class="route mono">/t/julphar</span></div>
+            <div>Clicks the "Aged over 60 days" tile, then a bar in "Where the exceptions sit".<span class="route mono">…/exceptions?age=60+</span></div>
+            <div>Opens the intercompany reconciliation from the workbench.<span class="route mono">…/reconciliations/:id</span></div>
+            <div>Approves recs in "Pending review" and ticks the checklist.<span class="route mono">…/reconciliations?stage=…</span></div>
+            <div>Ticks "Variance commentary written" and "Close pack sent to IDO".<span class="route mono">/t/julphar</span></div>
+
+            <div class="rowh">Key actions</div>
+            <div><ul><li>One click per company</li><li>No password in the demo</li></ul></div>
+            <div><ul><li>KPI tiles with 6-month sparklines</li><li>Month-end close checklist</li><li>Recent activity feed</li></ul></div>
+            <div><ul><li>Filters carried in the URL</li><li>Tick rows, then Resolve / Assign in bulk</li><li>Open a row for the suggested fix</li></ul></div>
+            <div><ul><li>Re-run auto-match</li><li>Resolve listed exceptions</li><li>Comment on the variance</li></ul></div>
+            <div><ul><li>Stage chips filter the list</li><li>Approve &amp; sign off</li><li>Auto tasks tick themselves</li></ul></div>
+            <div><ul><li>Manual checklist tasks</li><li>Health score updates live</li></ul></div>
+
+            <div class="rowh">Thinking</div>
+            <div class="feel"><span class="dot neutral"></span>"Where do we stand today?"</div>
+            <div class="feel"><span class="dot bad"></span>"Day 9, still open, 14 old items. IDO will see this."</div>
+            <div class="feel"><span class="dot warn"></span>"Most of the value is intercompany FX. That is one fix, not fifty."</div>
+            <div class="feel"><span class="dot good"></span>"Auto-match cleared the small stuff. The rest has a suggested fix."</div>
+            <div class="feel"><span class="dot good"></span>"Signed off with a trail the auditors can follow."</div>
+            <div class="feel"><span class="dot good"></span>"IDO sees the same numbers I do. No status email needed."</div>
+
+            <div class="rowh">Pain removed</div>
+            <div>Hunting for the right spreadsheet</div>
+            <div>No single view of what blocks sign-off</div>
+            <div>Sorting exceptions by hand in Excel</div>
+            <div>Tick-and-bash matching of thousands of lines</div>
+            <div>Chasing reviewers over email</div>
+            <div>Writing a separate status report</div>
+
+            <div class="rowh">Emotion</div>
+            <div class="curve">
+              <svg viewBox="0 0 600 96" preserveAspectRatio="none" role="img" aria-label="Emotion curve: neutral at sign in, low at morning check, recovering through triage, positive from working the reconciliation to reporting">
+                <line class="axis" x1="0" x2="600" y1="48" y2="48"/>
+                <path class="area" d="M50,48 L150,78 L250,58 L350,30 L450,18 L550,14 L550,96 L50,96 Z"/>
+                <polyline class="line" points="50,48 150,78 250,58 350,30 450,18 550,14"/>
+                <circle cx="50" cy="48" r="5" fill="var(--sky)"/><circle cx="150" cy="78" r="5" fill="var(--bad)"/><circle cx="250" cy="58" r="5" fill="var(--warn)"/><circle cx="350" cy="30" r="5" fill="var(--good)"/><circle cx="450" cy="18" r="5" fill="var(--good)"/><circle cx="550" cy="14" r="5" fill="var(--good)"/>
+                <text x="4" y="44">neutral</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="legend"><span><i class="dot good"></i>Confident</span><span><i class="dot warn"></i>Focused, some pressure</span><span><i class="dot bad"></i>Anxious</span><span><i class="dot neutral"></i>Neutral</span></div>
+      </div>
+    </section>
+
+    <!-- Journey 2 -->
+    <section id="j2">
+      <div class="eyebrow">Journey 2</div>
+      <h2>Preparer clears one reconciliation</h2>
+      <div class="journey">
+        <header>
+          <div><h3>Ahmed works the Julphar intercompany reconciliation</h3><p>The GL and the counterparty balance differ by about AED 1.6M across a handful of breaks. Ahmed needs to clear what he can, document the rest and submit for review.</p></div>
+          <div class="who"><span class="avatar" style="width:28px;height:28px;font-size:11px;border-radius:8px">AT</span> Preparer</div>
+        </header>
+        <div class="scroll">
+          <div class="map" style="--n:5">
+            <div class="rowh corner">Stage</div>
+            <div class="stage"><span>1</span><b>Open the rec</b></div>
+            <div class="stage"><span>2</span><b>Inspect lines</b></div>
+            <div class="stage"><span>3</span><b>Re-run auto-match</b></div>
+            <div class="stage"><span>4</span><b>Resolve and explain</b></div>
+            <div class="stage"><span>5</span><b>Submit for review</b></div>
+
+            <div class="rowh">Doing</div>
+            <div>Clicks the row in the workbench. Sees GL balance, source balance, variance and match bar.</div>
+            <div>Filters the Transactions tab to "Unmatched". Bank and ledger sit side by side with the match rule used.</div>
+            <div>Clicks "Re-run auto-match". A five-step progress panel runs, then a toast reports the result.</div>
+            <div>Opens the Exceptions tab, resolves items with a clear fix, comments on the FX true-up.</div>
+            <div>Clicks "Submit for review". The reviewer later clicks "Approve &amp; sign off".</div>
+
+            <div class="rowh">System response</div>
+            <div>Stage pill, preparer and reviewer, ERP shown in the header</div>
+            <div>Unmatched rows tinted red with "No matching entry" on the missing side</div>
+            <div>More items move to auto-matched, small timing and charge breaks clear, activity logs the run</div>
+            <div>Open count and variance drop; comment appears in the timeline</div>
+            <div>Stage moves to Pending review, then Signed off; checklist ticks itself</div>
+
+            <div class="rowh">Thinking</div>
+            <div class="feel"><span class="dot warn"></span>"AED 1.6M out. Where is it?"</div>
+            <div class="feel"><span class="dot neutral"></span>"Only a few lines are actually open."</div>
+            <div class="feel"><span class="dot good"></span>"The engine did the boring part."</div>
+            <div class="feel"><span class="dot good"></span>"The FX item has a fix I agree with."</div>
+            <div class="feel"><span class="dot good"></span>"Reviewer sees my notes, no email."</div>
+
+            <div class="rowh">Emotion</div>
+            <div class="curve">
+              <svg viewBox="0 0 500 96" preserveAspectRatio="none" role="img" aria-label="Emotion curve rising from pressured at opening to confident at submission">
+                <line class="axis" x1="0" x2="500" y1="48" y2="48"/>
+                <path class="area" d="M50,66 L150,48 L250,28 L350,22 L450,16 L450,96 L50,96 Z"/>
+                <polyline class="line" points="50,66 150,48 250,28 350,22 450,16"/>
+                <circle cx="50" cy="66" r="5" fill="var(--warn)"/><circle cx="150" cy="48" r="5" fill="var(--sky)"/><circle cx="250" cy="28" r="5" fill="var(--good)"/><circle cx="350" cy="22" r="5" fill="var(--good)"/><circle cx="450" cy="16" r="5" fill="var(--good)"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="legend"><span><i class="dot good"></i>Confident</span><span><i class="dot warn"></i>Pressured</span><span><i class="dot neutral"></i>Neutral</span></div>
+      </div>
+    </section>
+
+    <!-- Journey 3 -->
+    <section id="j3">
+      <div class="eyebrow">Journey 3</div>
+      <h2>IDO supervises the portfolio</h2>
+      <div class="journey">
+        <header>
+          <div><h3>IDO Group Finance checks the October close across all companies</h3><p>Eight of ten companies have closed. Julphar and Arabian Healthcare Group are still open and carry most of the aged exceptions. RAK Ports is the big improver since July.</p></div>
+          <div class="who"><span class="avatar ido" style="width:28px;height:28px;font-size:11px;border-radius:8px">GF</span> IDO Group Finance</div>
+        </header>
+        <div class="scroll">
+          <div class="map" style="--n:6">
+            <div class="rowh corner">Stage</div>
+            <div class="stage"><span>1</span><b>Enter master view</b></div>
+            <div class="stage"><span>2</span><b>Scan the portfolio</b></div>
+            <div class="stage"><span>3</span><b>Focus on risk</b></div>
+            <div class="stage"><span>4</span><b>Quick view a company</b></div>
+            <div class="stage"><span>5</span><b>Drill down read-only</b></div>
+            <div class="stage"><span>6</span><b>Follow up</b></div>
+
+            <div class="rowh">Doing</div>
+            <div>Clicks "Enter master view" on the sign-in page.<span class="route mono">/ido</span></div>
+            <div>Reads the hero summary, sector cards and five KPI tiles.</div>
+            <div>Clicks "Closes complete" to filter to open closes; reads risk flags; sorts by health.</div>
+            <div>Clicks Julphar's row or a red heatmap cell. The quick-view panel opens.</div>
+            <div>Clicks "Open company view" and inspects the exceptions and reconciliations.<span class="route mono">/t/julphar</span></div>
+            <div>Leaves a comment on an exception, or opens All exceptions filtered to over 60 days.<span class="route mono">/ido/exceptions</span></div>
+
+            <div class="rowh">Key actions</div>
+            <div><ul><li>No company picker needed</li></ul></div>
+            <div><ul><li>Sector cards filter the table</li><li>Sparklines show 6-month direction</li></ul></div>
+            <div><ul><li>Heatmap vs 92% target</li><li>May to Oct change column</li><li>Risk flags open the quick view</li></ul></div>
+            <div><ul><li>Health, match rate, unreconciled</li><li>Trend chart, top exceptions</li><li>"Ask about" the company</li></ul></div>
+            <div><ul><li>"IDO read-only view" badge</li><li>Actions replaced by a lock note</li></ul></div>
+            <div><ul><li>Comments allowed</li><li>Company filter in All exceptions</li></ul></div>
+
+            <div class="rowh">Thinking</div>
+            <div class="feel"><span class="dot neutral"></span>"Let's see the close."</div>
+            <div class="feel"><span class="dot good"></span>"92.6% overall, 8 closed. Mostly fine."</div>
+            <div class="feel"><span class="dot warn"></span>"Healthcare is red. Julphar and AHG again."</div>
+            <div class="feel"><span class="dot warn"></span>"Intercompany FX. Same issue as last quarter."</div>
+            <div class="feel"><span class="dot good"></span>"I can see exactly what they see, without asking."</div>
+            <div class="feel"><span class="dot good"></span>"Note left; they will see it in their activity."</div>
+
+            <div class="rowh">Pain removed</div>
+            <div>Waiting for ten status emails</div>
+            <div>Ten formats, no common scale</div>
+            <div>Finding outliers by reading every report</div>
+            <div>Calling the CFO for context</div>
+            <div>Requesting file extracts</div>
+            <div>Follow-up lost in email</div>
+
+            <div class="rowh">Emotion</div>
+            <div class="curve">
+              <svg viewBox="0 0 600 96" preserveAspectRatio="none" role="img" aria-label="Emotion curve: neutral, then positive overview, dipping on risk, recovering to confident follow-up">
+                <line class="axis" x1="0" x2="600" y1="48" y2="48"/>
+                <path class="area" d="M50,48 L150,32 L250,62 L350,56 L450,28 L550,20 L550,96 L50,96 Z"/>
+                <polyline class="line" points="50,48 150,32 250,62 350,56 450,28 550,20"/>
+                <circle cx="50" cy="48" r="5" fill="var(--sky)"/><circle cx="150" cy="32" r="5" fill="var(--good)"/><circle cx="250" cy="62" r="5" fill="var(--warn)"/><circle cx="350" cy="56" r="5" fill="var(--warn)"/><circle cx="450" cy="28" r="5" fill="var(--good)"/><circle cx="550" cy="20" r="5" fill="var(--good)"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="legend"><span><i class="dot good"></i>Confident</span><span><i class="dot warn"></i>Concerned</span><span><i class="dot neutral"></i>Neutral</span></div>
+      </div>
+    </section>
+
+    <!-- Journey 4 -->
+    <section id="j4">
+      <div class="eyebrow">Journey 4</div>
+      <h2>IDO asks the assistant</h2>
+      <div class="journey">
+        <header>
+          <div><h3>A board member asks: "Is RAK Ports actually improving?"</h3><p>IDO answers in under a minute from the assistant, then compares two companies and pulls the driver of the Healthcare exceptions.</p></div>
+          <div class="who"><span class="avatar ido" style="width:28px;height:28px;font-size:11px;border-radius:8px">GF</span> IDO Group Finance</div>
+        </header>
+        <div class="scroll">
+          <div class="map" style="--n:5">
+            <div class="rowh corner">Stage</div>
+            <div class="stage"><span>1</span><b>Open the assistant</b></div>
+            <div class="stage"><span>2</span><b>Ask the question</b></div>
+            <div class="stage"><span>3</span><b>Read the answer</b></div>
+            <div class="stage"><span>4</span><b>Follow up</b></div>
+            <div class="stage"><span>5</span><b>Share</b></div>
+
+            <div class="rowh">Doing</div>
+            <div>Clicks "Ask the assistant" in the hero, or "What needs attention?" for a pre-asked question.</div>
+            <div>Picks a suggested question or types "How has RAK Ports improved since July?"</div>
+            <div>Reads the narrative, the bold figures and the trend chart in the reply.</div>
+            <div>Clicks a follow-up chip such as "Compare Julphar and RAK Gas".</div>
+            <div>Clicks Copy on the answer and pastes it into the board note.</div>
+
+            <div class="rowh">Assistant does</div>
+            <div>Shows eight starter questions</div>
+            <div>Detects intent (trend) and company (RAK Ports) and month (July)</div>
+            <div>Answers from the same metrics as the dashboards, with chart or table</div>
+            <div>Offers two or three follow-ups that fit the answer</div>
+            <div>Copies plain text without markdown</div>
+
+            <div class="rowh">Thinking</div>
+            <div class="feel"><span class="dot warn"></span>"I need a number, quickly."</div>
+            <div class="feel"><span class="dot neutral"></span>"Plain English is fine."</div>
+            <div class="feel"><span class="dot good"></span>"Up about 6 points since July, with the reason."</div>
+            <div class="feel"><span class="dot good"></span>"The comparison table is already built."</div>
+            <div class="feel"><span class="dot good"></span>"Done before the meeting moves on."</div>
+
+            <div class="rowh">Emotion</div>
+            <div class="curve">
+              <svg viewBox="0 0 500 96" preserveAspectRatio="none" role="img" aria-label="Emotion curve from pressured to confident">
+                <line class="axis" x1="0" x2="500" y1="48" y2="48"/>
+                <path class="area" d="M50,64 L150,48 L250,24 L350,20 L450,14 L450,96 L50,96 Z"/>
+                <polyline class="line" points="50,64 150,48 250,24 350,20 450,14"/>
+                <circle cx="50" cy="64" r="5" fill="var(--warn)"/><circle cx="150" cy="48" r="5" fill="var(--sky)"/><circle cx="250" cy="24" r="5" fill="var(--good)"/><circle cx="350" cy="20" r="5" fill="var(--good)"/><circle cx="450" cy="14" r="5" fill="var(--good)"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="legend"><span><i class="dot good"></i>Confident</span><span><i class="dot warn"></i>Pressured</span><span><i class="dot neutral"></i>Neutral</span></div>
+      </div>
+    </section>
+
+    <!-- Moments -->
+    <section id="moments">
+      <div class="eyebrow">Design focus</div>
+      <h2>Key moments</h2>
+      <p class="intro">The points in the journeys where the product earns trust or loses it. These are the screens to polish first and to show in any demo.</p>
+      <div class="moments">
+        <div class="moment"><span class="tag bad">Low point</span><h3>Day 9, close still open</h3><p>The CFO overview must make the blocker obvious in one glance: close status tile in red, aged tile, and the "where the exceptions sit" chart pointing at one account type.</p></div>
+        <div class="moment"><span class="tag good">Turning point</span><h3>Auto-match clears the noise</h3><p>The re-run moves dozens of items to matched and clears small breaks. The toast and activity entry make the work visible, which is what reviewers need.</p></div>
+        <div class="moment"><span class="tag good">Trust</span><h3>Same numbers at both altitudes</h3><p>IDO's quick view, the CFO overview and the assistant all read from one metrics layer. A number never differs between screens.</p></div>
+        <div class="moment"><span class="tag warn">Risk</span><h3>Access denied</h3><p>A CFO who edits the URL to another company is sent back with a clear banner. This is the isolation promise; it has to feel firm, not broken.</p></div>
+        <div class="moment"><span class="tag good">Speed</span><h3>Question to answer in seconds</h3><p>Pre-asked prompts and follow-up chips mean IDO rarely types. Each answer carries its own table or chart.</p></div>
+        <div class="moment"><span class="tag warn">Gap</span><h3>Demo state resets on reload</h3><p>Resolutions, sign-offs and comments live in the browser only. Fine for a demo, and the first thing to change for a pilot.</p></div>
+      </div>
+    </section>
+
+    <!-- Screen inventory -->
+    <section id="screens">
+      <div class="eyebrow">Reference</div>
+      <h2>Screen inventory</h2>
+      <div class="table">
+        <table>
+          <thead><tr><th>Screen</th><th>Route</th><th>Used by</th><th>Purpose</th><th>Main actions</th></tr></thead>
+          <tbody>
+            <tr><td>Sign-in</td><td class="mono">/</td><td><span class="who-chip">All</span></td><td>Choose a persona</td><td>Enter master view, pick a company</td></tr>
+            <tr><td>Company overview</td><td class="mono">/t/:company</td><td><span class="who-chip">CFO</span><span class="who-chip">IDO read-only</span></td><td>Status of this close at a glance</td><td>Clickable KPIs and charts, close checklist, activity</td></tr>
+            <tr><td>Reconciliations</td><td class="mono">/t/:company/reconciliations</td><td><span class="who-chip">CFO</span><span class="who-chip">IDO read-only</span></td><td>Workbench of all accounts for a month</td><td>Month, type and stage filters, open a rec</td></tr>
+            <tr><td>Reconciliation detail</td><td class="mono">…/reconciliations/:id</td><td><span class="who-chip">Preparer</span><span class="who-chip">CFO</span><span class="who-chip">IDO read-only</span></td><td>Line-level matching and sign-off</td><td>Re-run auto-match, resolve, submit, approve, comment</td></tr>
+            <tr><td>Exceptions</td><td class="mono">/t/:company/exceptions</td><td><span class="who-chip">CFO</span><span class="who-chip">IDO read-only</span></td><td>Queue of unmatched breaks</td><td>Aging tiles, filters, bulk resolve and assign, exception panel</td></tr>
+            <tr><td>Portfolio overview</td><td class="mono">/ido</td><td><span class="who-chip">IDO</span></td><td>Compare all companies</td><td>Sector cards, sortable table, risk flags, heatmap, quick view</td></tr>
+            <tr><td>All exceptions</td><td class="mono">/ido/exceptions</td><td><span class="who-chip">IDO</span></td><td>Cross-portfolio exception list</td><td>Company and age filters, comment</td></tr>
+            <tr><td>Assistant</td><td class="mono">/ido/assistant</td><td><span class="who-chip">IDO</span></td><td>Plain-English questions</td><td>Suggested and follow-up questions, copy, new conversation</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Rules -->
+    <section id="rules">
+      <div class="eyebrow">Behaviour</div>
+      <h2>Rules and edge cases</h2>
+      <div class="cols">
+        <div class="box"><h3>Access</h3><ul><li>A CFO can only load their own company. Any other company URL redirects home with an "Access denied" banner.</li><li>A CFO cannot open <span class="mono">/ido</span> routes.</li><li>IDO can open every company, read-only. Resolve, assign and sign-off are hidden; comments stay available.</li></ul></div>
+        <div class="box"><h3>Close and health</h3><ul><li>Close SLA is 8 business days. Day 9 with an open close counts as a breach.</li><li>Health (0 to 100) blends match rate, exception age, close speed and sign-off progress.</li><li>Heatmap colours each month against a 92% group match-rate target.</li></ul></div>
+        <div class="box"><h3>Exceptions</h3><ul><li>Priority comes from amount: High above AED 250K, Medium above AED 40K.</li><li>Aging buckets: 0–30, 31–60, 61–90 and 90+ days from the date raised.</li><li>Re-running auto-match clears timing differences, bank charges and items under AED 15K.</li></ul></div>
+        <div class="box"><h3>Demo limits</h3><ul><li>All people, balances and exceptions are generated and fictional.</li><li>Changes live in the browser session and reset on reload.</li><li>The assistant matches question patterns; it does not call a language model.</li></ul></div>
+      </div>
+    </section>
+
+    <!-- Script -->
+    <section id="script">
+      <div class="eyebrow">Presenting</div>
+      <h2>Seven-minute demo script</h2>
+      <ol class="script">
+        <li><span class="t">0:00</span><div><b>Sign-in page.</b><p>Explain the two altitudes. Pick Julphar.</p></div></li>
+        <li><span class="t">0:45</span><div><b>CFO overview.</b><p>Day 9, close still open, health score, checklist. Click the aged tile.</p></div></li>
+        <li><span class="t">1:45</span><div><b>Exceptions.</b><p>Open the largest item, show the suggested fix. Tick three rows and resolve in bulk.</p></div></li>
+        <li><span class="t">2:45</span><div><b>Reconciliation detail.</b><p>Unmatched filter, Re-run auto-match, Submit for review, then Approve &amp; sign off.</p></div></li>
+        <li><span class="t">3:45</span><div><b>Access denied.</b><p>Type <span class="mono">/t/rak-gas</span> in the address bar to show isolation.</p></div></li>
+        <li><span class="t">4:15</span><div><b>Switch to IDO.</b><p>Sector cards, closes filter, heatmap against target, risk flags.</p></div></li>
+        <li><span class="t">5:15</span><div><b>Quick view.</b><p>Open Julphar from a red heatmap cell, then "Ask about".</p></div></li>
+        <li><span class="t">6:00</span><div><b>Assistant.</b><p>"How has RAK Ports improved since July?" then "Compare Julphar and RAK Gas". Copy an answer.</p></div></li>
+      </ol>
+    </section>
+
+    <!-- Next -->
+    <section id="next">
+      <div class="eyebrow">Roadmap</div>
+      <h2>From demo to product</h2>
+      <div class="cols">
+        <div class="box"><h3>Mocked in the demo</h3><ul><li>Persona picker instead of sign-in</li><li>Generated balances, lines and exceptions</li><li>Pattern-matched assistant answers</li><li>Browser-only state</li></ul></div>
+        <div class="box"><h3>Needed for a pilot</h3><ul><li>SSO with roles per company and an IDO supervisor role</li><li>Connectors for SAP, Oracle, Dynamics, Xero and bank statements</li><li>A database with an audit log that cannot be edited</li><li>Assistant backed by a language model over the metrics layer, with cited figures</li><li>Notifications when a close breaches SLA</li></ul></div>
+      </div>
+    </section>
+
+    <footer class="end">Company names from ido.ae/portfolio. All people, balances and exceptions in the demo are fictional. Prepared for the IDO Finance Reconciliation Supervisor demo, November 2026.</footer>
+  </main>
+</div>

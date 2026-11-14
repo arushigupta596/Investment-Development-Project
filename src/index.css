@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  /* IDO default palette as RGB channels; company themes override these (src/lib/brand.ts) */
+  --ido-primary: 10 61 80;
+  --ido-navy: 0 28 39;
+  --ido-teal: 1 86 119;
+  --ido-sky: 117 156 175;
+  --ido-muted: 128 142 147;
+  --ido-slate: 111 125 130;
+  --ido-mist: 238 243 245;
+  --ido-line: 220 229 233;
+}
+html, body, #root { height: 100%; }
+body { @apply bg-ido-mist text-ido-navy font-sans antialiased; }
+h1, h2, h3 { letter-spacing: -0.02em; }
+
+@layer components {
+  .card { @apply min-w-0 bg-white rounded-xl border border-ido-line shadow-[0_1px_2px_rgba(0,28,39,0.04)]; }
+  .card-pad { @apply p-5; }
+  .eyebrow { @apply text-[11px] font-semibold uppercase tracking-[0.12em] text-ido-slate; }
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed; }
+  .btn-primary { @apply btn bg-ido-primary text-white hover:bg-ido-teal; }
+  .btn-ghost { @apply btn border border-ido-line text-ido-primary hover:bg-ido-mist; }
+  .input { @apply rounded-full border border-ido-line bg-white px-4 py-2 text-sm outline-none focus:border-ido-sky focus:ring-2 focus:ring-ido-sky/30; }
+  .th { @apply px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-ido-slate whitespace-nowrap; }
+  .td { @apply px-4 py-3 text-sm whitespace-nowrap; }
+}
+
+.typing span { animation: blink 1.2s infinite both; }
+.typing span:nth-child(2) { animation-delay: .2s; }
+.typing span:nth-child(3) { animation-delay: .4s; }
+@keyframes blink { 0%, 80%, 100% { opacity: .2 } 40% { opacity: 1 } }
