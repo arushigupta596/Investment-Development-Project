@@ -4,3 +4,4 @@ dist
 .env.local
 server/.cache
 .DS_Store
+.DS_Store
